@@ -1,0 +1,45 @@
+.header{
+  padding: 20px 0;
+  &__row{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  &__input{
+    width: 25%;
+    height: 40px;
+    padding-left: 15px;
+    outline: none;
+  }
+}
+.news{
+  &__row{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    &__card{
+      width: calc(25% - 11.25px);
+      border-radius: 4px;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid black;
+      word-break: break-all;
+      &__cont{
+        margin: 0 15px;
+      }
+      &__info{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+      }
+      &__btn{
+        border: none;
+        outline: none;
+        font-size: 24px;
+        display: flex;
+        color: deepskyblue;
+        background: none;
+      }
+    }
+  }
+}
