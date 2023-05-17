@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {fetchFromAPI} from "../../fetchFromApi";
-import {useNavigate} from "react-router-dom";
-
+import Data from '../../components/Data'
 const Home = () => {
 
    const [news,setNews] = useState([])
@@ -11,6 +10,9 @@ const Home = () => {
             .then(data => {
                 const sortedData = data.articles.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt))
                 setNews(sortedData)
+            })
+            .catch(err => {
+                console.log(err)
             })
     }
     const handleRefresh = () => {
@@ -30,7 +32,7 @@ const Home = () => {
         }
     }, [search])
 
-    const nav = useNavigate()
+
     return (
         <>
             <header className={'header'}>
@@ -45,46 +47,7 @@ const Home = () => {
                 <section className="news">
                     <div className="container">
                         <button className={'news__btn'} onClick={handleRefresh}>Refresh</button>
-                        <div className="news__row">
-                            {
-                                search ?  news.filter(item => item.author && item.author.toLowerCase().startsWith(search))
-                                .map((item, index) => (
-                                    <div key={index} className={'news__row__card'}>
-                                        <img width={'100%'} height={180} src={item.urlToImage} alt=""/>
-                                        <div className="news__row__card__cont">
-                                            <h2>{item.author}</h2>
-                                            <br/>
-                                            <p>{item.content}</p>
-                                            <br/>
-                                            <p>Published: {item.publishedAt}</p>
-                                            <br/>
-                                            <p><a href={item.url}>ссылка на сайт-источник</a></p>
-                                            <button onClick={() => nav(`news/${index}`)} className="news__row__card__btn">
-                                                More
-                                            </button>
-                                        </div>
-                                    </div>
-                                )) :
-                                news.slice(0,15).map((item,index) => (
-                                    <div key={index} className={'news__row__card'}>
-                                        <img width={'100%'} height={180} src={item.urlToImage} alt=""/>
-                                        <div className="news__row__card__cont">
-                                            <h2>{item.author}</h2>
-                                            <br/>
-                                            <p>{item.content}</p>
-                                            <br/>
-                                            <p>Published: {item.publishedAt}</p>
-                                            <br/>
-                                            <p><a href={item.url}>ссылка на сайт-источник</a></p>
-                                            <br/>
-                                            <button onClick={() => nav(`news/${index}`)} className="news__row__card__btn">
-                                                More
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))
-                            }
-                        </div>
+                           <Data search={search} news={news}/>
                     </div>
                 </section>
             </main>
