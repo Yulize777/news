@@ -6,14 +6,30 @@ const Home = () => {
 
    const [news,setNews] = useState([])
     const [search,setSearch] = useState('')
-    useEffect(() => {
-         fetchFromAPI(search && `news/news?source_like=${search}`)
-             .then(data =>  setNews(data.news.news))
-    },[search])
+    const fetchNews = () => {
+        fetchFromAPI()
+            .then(data => {
+                const sortedData = data.articles.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt))
+                setNews(sortedData)
+            })
+    }
+    const handleRefresh = () => {
+        fetchNews()
+    }
 
-    const sortedData = news.sort((a,b) => {
-        return new Date(b.created_at) - new Date(a.created_at)
-    })
+
+    useEffect(() => {
+        fetchNews()
+
+        const interval = setInterval(() => {
+            fetchNews()
+        }, 60000)
+
+        return () => {
+            clearInterval(interval)
+        }
+    }, [search])
+
     const nav = useNavigate()
     return (
         <>
@@ -28,28 +44,43 @@ const Home = () => {
             <main className="main">
                 <section className="news">
                     <div className="container">
+                        <button className={'news__btn'} onClick={handleRefresh}>Refresh</button>
                         <div className="news__row">
                             {
-                                sortedData.slice(0,15).map(item => (
-                                    <div key={item.link} className={'news__row__card'}>
-                                        <img width={'100%'} height={180} src={item.props.image} alt=""/>
+                                search ?  news.filter(item => item.author && item.author.toLowerCase().startsWith(search))
+                                .map((item, index) => (
+                                    <div key={index} className={'news__row__card'}>
+                                        <img width={'100%'} height={180} src={item.urlToImage} alt=""/>
                                         <div className="news__row__card__cont">
-                                            <h2>{item.source}</h2>
+                                            <h2>{item.author}</h2>
                                             <br/>
-                                            <p>{item.title}</p>
+                                            <p>{item.content}</p>
                                             <br/>
-                                            <p>Опубликовано: {item.created_at}</p>
+                                            <p>Published: {item.publishedAt}</p>
                                             <br/>
-                                            <p>Язык: {item.language && 'Русский'}</p>
-                                            <br/>
-                                            <p><a href={item.link}>ссылка на сайт-источник</a></p>
-                                            <br/>
-                                            <p>Рейтинг: {Math.floor(item._score)}</p>
-                                            <button onClick={() => nav(`news/${item.hostname}`)} className="news__row__card__btn">
-                                                Подробнее
+                                            <p><a href={item.url}>ссылка на сайт-источник</a></p>
+                                            <button onClick={() => nav(`news/${index}`)} className="news__row__card__btn">
+                                                More
                                             </button>
                                         </div>
-
+                                    </div>
+                                )) :
+                                news.slice(0,15).map((item,index) => (
+                                    <div key={index} className={'news__row__card'}>
+                                        <img width={'100%'} height={180} src={item.urlToImage} alt=""/>
+                                        <div className="news__row__card__cont">
+                                            <h2>{item.author}</h2>
+                                            <br/>
+                                            <p>{item.content}</p>
+                                            <br/>
+                                            <p>Published: {item.publishedAt}</p>
+                                            <br/>
+                                            <p><a href={item.url}>ссылка на сайт-источник</a></p>
+                                            <br/>
+                                            <button onClick={() => nav(`news/${index}`)} className="news__row__card__btn">
+                                                More
+                                            </button>
+                                        </div>
                                     </div>
                                 ))
                             }

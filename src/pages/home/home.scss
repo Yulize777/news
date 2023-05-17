@@ -1,5 +1,6 @@
 .header{
   padding: 20px 0;
+
   &__row{
     display: flex;
     align-items: center;
@@ -13,6 +14,12 @@
   }
 }
 .news{
+  &__btn{
+    padding: 20px;
+    background: none;
+    cursor: pointer;
+    border: none;
+  }
   &__row{
     display: flex;
     flex-wrap: wrap;
@@ -39,6 +46,7 @@
         display: flex;
         color: deepskyblue;
         background: none;
+        cursor: pointer;
       }
     }
   }
